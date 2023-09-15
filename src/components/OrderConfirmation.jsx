@@ -2,7 +2,6 @@ import styles from "./styles/OrderConfirmation.module.css";
 
 function OrderConfirmation(props) {
   const { order } = props;
-  console.log(order);
 
   return (
     <div className={styles.orderConfirmation}>
