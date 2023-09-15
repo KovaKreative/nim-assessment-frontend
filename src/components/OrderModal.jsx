@@ -82,15 +82,6 @@ function OrderModal({ order, setOrderModal }) {
       />
       <div className={styles.orderModalContent}>
         <h2>Place Order</h2>
-        {errors.length > 0 && (
-          <div className={styles.errors}>
-            <ul>
-              {errors.map((err) => (
-                <li key={`${err}`}>{err}</li>
-              ))}
-            </ul>
-          </div>
-        )}
         <form className={styles.form}>
           <div className={styles.formGroup}>
             <label htmlFor="name">
@@ -136,7 +127,15 @@ function OrderModal({ order, setOrderModal }) {
             </label>
           </div>
         </form>
-
+        {errors.length > 0 && (
+          <div className={styles.errors}>
+            <ul>
+              {errors.map((err) => (
+                <li key={`${err}`}>{err}</li>
+              ))}
+            </ul>
+          </div>
+        )}
         <div className={styles.orderModalButtons}>
           <button
             className={styles.orderModalClose}
