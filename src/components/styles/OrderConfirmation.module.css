@@ -1,0 +1,43 @@
+.confirmationPage {
+  height: 100%;
+  background-color: var(--primary-color);
+  color: var(--primary-text);
+  text-align: center;
+}
+
+.orderConfirmation {
+  background-color: white;
+  width: fit-content;
+  margin: 1rem auto;
+  padding: 3rem 1rem;
+  animation-duration: 1s;
+  animation-timing-function: cubic-bezier(0.075, 0.82, 0.165, 1);
+  animation-name: fadeIn;
+  overflow: hidden;
+}
+
+.orderDetails {
+  padding: 0 1em;
+  line-height: 1.5rem;
+}
+
+.itemList {
+  text-align: left;
+  list-style: inside;
+}
+
+.orderDetails > hr {
+  margin: 1em;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: scaleY(0);
+  }
+
+  to {
+    opacity: 1;
+    transform: scaleY(1);
+  }
+}
