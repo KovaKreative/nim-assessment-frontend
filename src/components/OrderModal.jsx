@@ -8,6 +8,7 @@ function OrderModal({ order, setOrderModal }) {
   const [name, setName] = useState("");
   const [phone, setPhone] = useState("");
   const [address, setAddress] = useState("");
+  const [errors, setErrors] = useState([]);
 
   const placeOrder = async () => {
     const response = await fetch("/api/orders", {
@@ -28,6 +29,19 @@ function OrderModal({ order, setOrderModal }) {
       navigate(`order-confirmation/${id}`);
     }
   };
+
+  const validateFields = (fields) => {
+    setErrors([]);
+    const errorsBuffer = [];
+    Object.keys(fields).forEach(field => {
+      if(!fields[field]) {
+        errorsBuffer.push(`${field} cannot be blank.`);
+      }
+    });
+    setErrors([...errorsBuffer]);
+    return errorsBuffer.length;
+  };
+
   return (
     <>
       <div
@@ -44,6 +58,11 @@ function OrderModal({ order, setOrderModal }) {
       />
       <div className={styles.orderModalContent}>
         <h2>Place Order</h2>
+        {errors.length > 0 && <div className={styles.errors}>
+          <ul>
+            {errors.map((err) => <li key={err}>{err}</li>)}
+          </ul>
+        </div>}
         <form className={styles.form}>
           <div className={styles.formGroup}>
             <label htmlFor="name">
@@ -95,6 +114,9 @@ function OrderModal({ order, setOrderModal }) {
           </button>
           <button
             onClick={() => {
+              if (validateFields({name, phone, address})) {
+                return;
+              }
               placeOrder();
             }}
             className={styles.orderModalPlaceOrder}
