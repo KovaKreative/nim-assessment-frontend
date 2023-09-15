@@ -38,6 +38,7 @@
   justify-content: space-evenly;
   width: 100%;
 }
+
 .formGroup {
   width: 100%;
   display: flex;
@@ -53,13 +54,29 @@
   justify-content: center;
   margin-bottom: 20px;
 }
+
 .deliveryChoice button:first-child {
   border-radius: 5px 0 0 5px;
 }
+
 .deliveryChoice button:last-child {
   border-radius: 0 5px 5px 0;
 }
+
 .deliveryChoice .active {
   background-color: var(--secondary-accent);
   color: var(--secondary-color);
+}
+
+.errors {
+  background-color: #fab;
+  color: #502;
+  padding: 20px 40px;
+  margin-bottom: 20px;
+  border: 2px dotted #502;
+  text-transform: capitalize;
+}
+
+.errors > ul {
+  list-style: none;
 }

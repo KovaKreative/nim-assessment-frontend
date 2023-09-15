@@ -8,6 +8,7 @@ function OrderModal({ order, setOrderModal }) {
   const [name, setName] = useState("");
   const [phone, setPhone] = useState("");
   const [address, setAddress] = useState("");
+  const [errors, setErrors] = useState([]);
 
   const placeOrder = async () => {
     const response = await fetch("/api/orders", {
@@ -28,6 +29,43 @@ function OrderModal({ order, setOrderModal }) {
       navigate(`order-confirmation/${id}`);
     }
   };
+
+  const getBarePhoneNumber = (number) => String(number).replace(/\D/g, "");
+
+  const validateFields = (fields) => {
+    let formValid = true;
+    setErrors([]);
+    if (getBarePhoneNumber(fields.phone).length !== 10) {
+      setErrors((prev) => [...prev, "Phone number must consist of 10 digits."]);
+      formValid = false;
+    }
+    Object.keys(fields).forEach((field) => {
+      if (!fields[field]) {
+        setErrors((prev) => [...prev, `${field} cannot be blank.`]);
+        formValid = false;
+      }
+    });
+
+    return formValid;
+  };
+
+  const formatPhoneNumber = (number) => {
+    const bareNumber = getBarePhoneNumber(number).slice(0, 10);
+    const phoneNumber = {
+      areaCode: bareNumber.slice(0, 3),
+      prefix: bareNumber.slice(3, 6),
+      lineNumber: bareNumber.slice(6)
+    };
+    return (
+      `${phoneNumber.areaCode.length ? "(" : ""}` +
+      `${phoneNumber.areaCode}` +
+      `${phoneNumber.areaCode.length === 3 ? ") " : ""}` +
+      `${phoneNumber.prefix}` +
+      `${phoneNumber.prefix.length === 3 ? "-" : ""}` +
+      `${phoneNumber.lineNumber}`
+    );
+  };
+
   return (
     <>
       <div
@@ -66,6 +104,10 @@ function OrderModal({ order, setOrderModal }) {
                   e.preventDefault();
                   setPhone(e.target.value);
                 }}
+                onBlur={() => {
+                  setPhone(formatPhoneNumber(phone));
+                }}
+                value={phone}
                 type="phone"
                 id="phone"
               />
@@ -85,7 +127,15 @@ function OrderModal({ order, setOrderModal }) {
             </label>
           </div>
         </form>
-
+        {errors.length > 0 && (
+          <div className={styles.errors}>
+            <ul>
+              {errors.map((err) => (
+                <li key={`${err}`}>{err}</li>
+              ))}
+            </ul>
+          </div>
+        )}
         <div className={styles.orderModalButtons}>
           <button
             className={styles.orderModalClose}
@@ -95,7 +145,9 @@ function OrderModal({ order, setOrderModal }) {
           </button>
           <button
             onClick={() => {
-              placeOrder();
+              if (validateFields({ name, phone, address })) {
+                placeOrder();
+              }
             }}
             className={styles.orderModalPlaceOrder}
           >
