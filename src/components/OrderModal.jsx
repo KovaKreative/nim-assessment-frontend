@@ -30,16 +30,35 @@ function OrderModal({ order, setOrderModal }) {
     }
   };
 
+  const getBarePhoneNumber = (number) => String(number).replace(/\D/g, "");
+
   const validateFields = (fields) => {
     setErrors([]);
-    const errorsBuffer = [];
-    Object.keys(fields).forEach(field => {
-      if(!fields[field]) {
-        errorsBuffer.push(`${field} cannot be blank.`);
+    if (getBarePhoneNumber(fields.phone).length !== 10) {
+      setErrors((prev) => [...prev, "Phone number must consist of 10 digits."]);
+    }
+    Object.keys(fields).forEach((field) => {
+      if (!fields[field]) {
+        setErrors((prev) => [...prev, `${field} cannot be blank.`]);
       }
     });
-    setErrors([...errorsBuffer]);
-    return errorsBuffer.length;
+  };
+
+  const formatPhoneNumber = (number) => {
+    const bareNumber = getBarePhoneNumber(number).slice(0, 10);
+    const phoneNumber = {
+      areaCode: bareNumber.slice(0, 3),
+      prefix: bareNumber.slice(3, 6),
+      lineNumber: bareNumber.slice(6)
+    };
+    return (
+      `${phoneNumber.areaCode.length ? "(" : ""}` +
+      `${phoneNumber.areaCode}` +
+      `${phoneNumber.areaCode.length === 3 ? ") " : ""}` +
+      `${phoneNumber.prefix}` +
+      `${phoneNumber.prefix.length === 3 ? "-" : ""}` +
+      `${phoneNumber.lineNumber}`
+    );
   };
 
   return (
@@ -58,11 +77,15 @@ function OrderModal({ order, setOrderModal }) {
       />
       <div className={styles.orderModalContent}>
         <h2>Place Order</h2>
-        {errors.length > 0 && <div className={styles.errors}>
-          <ul>
-            {errors.map((err) => <li key={err}>{err}</li>)}
-          </ul>
-        </div>}
+        {errors.length > 0 && (
+          <div className={styles.errors}>
+            <ul>
+              {errors.map((err) => (
+                <li key={`${err}`}>{err}</li>
+              ))}
+            </ul>
+          </div>
+        )}
         <form className={styles.form}>
           <div className={styles.formGroup}>
             <label htmlFor="name">
@@ -85,6 +108,10 @@ function OrderModal({ order, setOrderModal }) {
                   e.preventDefault();
                   setPhone(e.target.value);
                 }}
+                onBlur={() => {
+                  setPhone(formatPhoneNumber(phone));
+                }}
+                value={phone}
                 type="phone"
                 id="phone"
               />
@@ -114,7 +141,8 @@ function OrderModal({ order, setOrderModal }) {
           </button>
           <button
             onClick={() => {
-              if (validateFields({name, phone, address})) {
+              validateFields({ name, phone, address });
+              if (errors.length) {
                 return;
               }
               placeOrder();
