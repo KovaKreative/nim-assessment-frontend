@@ -33,15 +33,20 @@ function OrderModal({ order, setOrderModal }) {
   const getBarePhoneNumber = (number) => String(number).replace(/\D/g, "");
 
   const validateFields = (fields) => {
+    let formValid = true;
     setErrors([]);
     if (getBarePhoneNumber(fields.phone).length !== 10) {
       setErrors((prev) => [...prev, "Phone number must consist of 10 digits."]);
+      formValid = false;
     }
     Object.keys(fields).forEach((field) => {
       if (!fields[field]) {
         setErrors((prev) => [...prev, `${field} cannot be blank.`]);
+        formValid = false;
       }
     });
+
+    return formValid;
   };
 
   const formatPhoneNumber = (number) => {
@@ -141,11 +146,9 @@ function OrderModal({ order, setOrderModal }) {
           </button>
           <button
             onClick={() => {
-              validateFields({ name, phone, address });
-              if (errors.length) {
-                return;
+              if (validateFields({ name, phone, address })) {
+                placeOrder();
               }
-              placeOrder();
             }}
             className={styles.orderModalPlaceOrder}
           >
